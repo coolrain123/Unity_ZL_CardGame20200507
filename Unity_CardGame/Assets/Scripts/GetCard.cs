@@ -14,9 +14,12 @@ public class GetCard : MonoBehaviour
 
     private CanvasGroup loadingPanel;
     private Image loading;
+    public static GetCard instance;
 
     private void Awake()
     {
+        instance = this;
+
         loadingPanel = GameObject.Find("載入畫面").GetComponent<CanvasGroup>();
         loading = GameObject.Find("進度條").GetComponent<Image>();
 
@@ -76,23 +79,11 @@ public class GetCard : MonoBehaviour
 
             temp.Find("遮色片").Find("卡片圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
 
+            //將<卡牌圖鑑>.編號 = 卡片.編號;
+            temp.gameObject.AddComponent<BookCard>().index = card.index;
         }
     }
-    /// <summary>
-    /// 卡片資料
-    /// </summary>
-    /// 序列化:使資訊可顯示在屬性面板上 
-    [System.Serializable]
-    public class CardData
-    {
-        public int index;
-        public string name;
-        public string description;
-        public int cost;
-        public float attack;
-        public float hp;
-        public string file;
-    }
+    
 
     /// <summary>
     /// 讀取 Excel 資料並轉換為陣列
@@ -111,4 +102,21 @@ public class GetCard : MonoBehaviour
             public T[] Items;
         }
     }
+    
+}
+
+/// <summary>
+/// 卡片資料
+/// </summary>
+/// 序列化:使資訊可顯示在屬性面板上 
+[System.Serializable]
+public class CardData
+{
+    public int index;
+    public string name;
+    public string description;
+    public int cost;
+    public float attack;
+    public float hp;
+    public string file;
 }
