@@ -16,12 +16,25 @@ public class DeckManager : MonoBehaviour
     public Text TextCountDeck;
     [Header("開始遊戲按鈕")]
     public Button btnStart;
-
+    [Header("洗牌後牌組")]
+    public Transform transShuffle;
+   
+    /// <summary>
+    /// 開始遊戲
+    /// </summary>
+    private void StartBattle()
+    {      
+        Shuffle();
+        BattleManager.instance.StartBattle();
+       
+    }
     private void Awake()
     {
         instance = this;
 
         btnStart.interactable = false;
+
+        btnStart.onClick.AddListener(StartBattle);
     }
 
     public void AddCard(int index)
@@ -94,4 +107,55 @@ public class DeckManager : MonoBehaviour
         btnStart.interactable = false;
       
     }
+
+    private void Update()
+    {
+        if(Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Shuffle();
+        }
+    }
+    public void Shuffle()
+    {
+        for (int i = 0; i < deck.Count; i++)
+        {
+            //儲存目前卡牌
+            CardData original = deck[i];
+
+            //取得隨機 0 - 30
+            int r = Random.Range(0, deck.Count);
+
+            // 目前 = 隨機卡牌
+            deck[i] = deck[r];
+
+            // 隨機卡牌 = 目前
+            deck[r] = original;
+        }
+        CreateCard();
+    }
+
+    /// <summary>
+    /// 建立卡牌物件放在 洗牌後牌組
+    /// </summary>
+    private void CreateCard()
+    {
+        for (int i = 0; i < deck.Count; i++)
+        {
+            Transform temp = Instantiate(GetCard.instance.cardObject, transShuffle).transform;
+
+            CardData card = deck[i];
+
+            temp.Find("消耗").GetComponent<Text>().text = card.cost.ToString();
+            temp.Find("攻擊").GetComponent<Text>().text = card.attack.ToString();
+            temp.Find("血量").GetComponent<Text>().text = card.hp.ToString();
+            temp.Find("名稱").GetComponent<Text>().text = card.name.ToString();
+            temp.Find("描述").GetComponent<Text>().text = card.description.ToString();
+
+            temp.Find("遮色片").Find("卡片圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
+
+            
+        }
+    }
+   
+   
 }

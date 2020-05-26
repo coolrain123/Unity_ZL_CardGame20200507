@@ -54,7 +54,7 @@ public class GetCard : MonoBehaviour
             else
             {                
                 cards = JsonHelper.FromJson<CardData>(www.downloadHandler.text);
-                cresteCard();
+                CreateCard();
             }
         }
         yield return new WaitForSeconds(0.5f);
@@ -63,7 +63,7 @@ public class GetCard : MonoBehaviour
 
     }
 
-    private void cresteCard()
+    private void CreateCard()
     {
         for (int i = 0; i < cards.Length; i++)
         {
