@@ -6,9 +6,12 @@ public class DeckManager : MonoBehaviour
 {
 
     public List<CardData> deck= new List<CardData>();   
+
+    public List<GameObject> deckGameObject= new List<GameObject>();   
+    //牌組管理器實體物件
     public static DeckManager instance;
 
-    [Header("牌組卡牌資訊")]
+    [Header("卡牌物件")]
     public GameObject DeckObject;
     [Header("牌組內容")]
     public Transform contentDeck;
@@ -72,6 +75,8 @@ public class DeckManager : MonoBehaviour
                 temp.Find("卡片名稱").GetComponent<Text>().text = card.name;
                 temp.Find("數量").GetComponent<Text>().text = (sameCard.Count + 1).ToString();
                 TextCountDeck.text = "卡片數量: " + deck.Count + " / 30";
+
+                
             }
            
             
@@ -115,6 +120,7 @@ public class DeckManager : MonoBehaviour
             Shuffle();
         }
     }
+
     public void Shuffle()
     {
         for (int i = 0; i < deck.Count; i++)
@@ -134,7 +140,7 @@ public class DeckManager : MonoBehaviour
         CreateCard();
     }
 
-    /// <summary>
+        /// <summary>
     /// 建立卡牌物件放在 洗牌後牌組
     /// </summary>
     private void CreateCard()
@@ -148,12 +154,12 @@ public class DeckManager : MonoBehaviour
             temp.Find("消耗").GetComponent<Text>().text = card.cost.ToString();
             temp.Find("攻擊").GetComponent<Text>().text = card.attack.ToString();
             temp.Find("血量").GetComponent<Text>().text = card.hp.ToString();
-            temp.Find("名稱").GetComponent<Text>().text = card.name.ToString();
-            temp.Find("描述").GetComponent<Text>().text = card.description.ToString();
+            temp.Find("名稱").GetComponent<Text>().text = card.name;
+            temp.Find("描述").GetComponent<Text>().text = card.description;
 
             temp.Find("遮色片").Find("卡片圖").GetComponent<Image>().sprite = Resources.Load<Sprite>(card.file);
 
-            
+            deckGameObject.Add(temp.gameObject);
         }
     }
    
