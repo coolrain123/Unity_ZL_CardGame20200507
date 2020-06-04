@@ -8,6 +8,8 @@ public class BattleManager : MonoBehaviour
 
     public List<GameObject> handGameObject = new List<GameObject>();
 
+    public static BattleManager instance;
+
     [Header("金幣")]
     public Rigidbody coin;
     [Header("遊戲畫面")]   
@@ -17,7 +19,10 @@ public class BattleManager : MonoBehaviour
     public Transform handArea;
 
     private bool firstAtk;
-    public static BattleManager instance;
+    /// <summary>
+    /// 水晶數量
+    /// </summary>
+    public int crystal = 1;
 
     private void Start()
     {

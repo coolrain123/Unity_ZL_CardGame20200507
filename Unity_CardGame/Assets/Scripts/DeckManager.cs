@@ -21,7 +21,8 @@ public class DeckManager : MonoBehaviour
     public Button btnStart;
     [Header("洗牌後牌組")]
     public Transform transShuffle;
-   
+
+    
     /// <summary>
     /// 開始遊戲
     /// </summary>
@@ -117,10 +118,20 @@ public class DeckManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Alpha1))
         {
-            Shuffle();
+            choose30Cards();
         }
     }
 
+    private void choose30Cards()
+    {
+        for (int i = 0; i < 2; i++)
+        {
+            for (int j = 1; j <= 15; j++)
+            {
+                AddCard(j);
+            }
+        }
+    }
     public void Shuffle()
     {
         for (int i = 0; i < deck.Count; i++)
