@@ -49,16 +49,24 @@ public class BattleManager : MonoBehaviour
         ThrowCoin();
     }
 
+    /// <summary>
+    /// 我方結束
+    /// </summary>
     public void EndTurn()
     {
         myTurn = false;
     }
 
+    /// <summary>
+    /// 對方結束 水晶+1
+    /// </summary>
     public void StartTurn()
     {
         myTurn = true;
         crystalTotal++;
+        crystalTotal = Mathf.Clamp(crystalTotal, 1, 10);//夾住水晶數1~10
         crystal = crystalTotal;
+       
         Crystal();
         StartCoroutine(GetCard(1));
     }
@@ -148,10 +156,13 @@ public class BattleManager : MonoBehaviour
     /// 抽出卡牌並移動到手牌區
     /// </summary>
     /// <returns></returns>
+
+    private int handcardCount;
     private IEnumerator MoveCard()
     {
         RectTransform card = handGameObject[handGameObject.Count - 1].GetComponent<RectTransform>();
 
+        //進手牌前
         card.SetParent(canvas);
         card.anchorMin = Vector2.one * 0.5f;
         card.anchorMax = Vector2.one * 0.5f;
@@ -165,16 +176,27 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.35f);
 
-        card.localScale = Vector3.one * 0.5f;
-
-        while (card.anchoredPosition.y > -274)
+        if(handcardCount == 10)//大於10張
         {
-            card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, -275), 0.5f * Time.deltaTime * 50);
-           
-            yield return null;
+            print("爆手牌");
         }
 
-        card.SetParent(handArea);
-        card.gameObject.AddComponent<HandCard>();
+        else
+        {
+            //進入手牌
+            card.localScale = Vector3.one * 0.5f;
+
+            while (card.anchoredPosition.y > -274)
+            {
+                card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, -275), 0.5f * Time.deltaTime * 50);
+
+                yield return null;
+            }
+
+            card.SetParent(handArea);
+            card.gameObject.AddComponent<HandCard>();
+            handcardCount++;
+        }
+       
     }
 }
