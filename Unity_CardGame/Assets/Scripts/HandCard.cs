@@ -28,7 +28,7 @@ public class HandCard : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHa
     {
         if (inScene) return;
         transform.position = eventData.position;
-        print(rect.anchoredPosition.y);
+       
         
     }
 
@@ -51,6 +51,7 @@ public class HandCard : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHa
             transform.SetParent(scene);
             BattleManager.instance.crystal -= crystalCost;
             print(BattleManager.instance.crystal);
+            BattleManager.instance.UpdateCrystal();
         }
         else
         {
