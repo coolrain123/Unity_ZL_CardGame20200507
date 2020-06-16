@@ -16,5 +16,5 @@ MonoBehaviour:
   - __PanelContainer__rootVisualContainer__fb9a8fd5c5060f842a0608b3a705b408__MaterialGraphView__UnityEditor.Experimental.GraphView.GraphView+PersistedViewTransform
   - __PanelContainer__rootVisualContainer__fb9a8fd5c5060f842a0608b3a705b408__MaterialGraphView__UnityEditor.Experimental.GraphView.GraphView+PersistedSelection
   m_Values:
-  - '{"position":{"x":613.0,"y":142.0,"z":0.0},"scale":{"x":0.6575162410736084,"y":0.6575162410736084,"z":1.0}}'
-  - '{"m_Version":17,"m_SelectedElementsArray":[]}'
+  - '{"position":{"x":432.0,"y":124.0,"z":0.0},"scale":{"x":0.30136987566947939,"y":0.30136987566947939,"z":1.0}}'
+  - '{"m_Version":0,"m_SelectedElementsArray":[]}'

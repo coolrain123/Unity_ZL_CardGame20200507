@@ -157,7 +157,7 @@ public class BattleManager : MonoBehaviour
     /// </summary>
     /// <returns></returns>
 
-    private int handcardCount;
+    public int handcardCount;
     private IEnumerator MoveCard()
     {
         RectTransform card = handGameObject[handGameObject.Count - 1].GetComponent<RectTransform>();
@@ -176,9 +176,33 @@ public class BattleManager : MonoBehaviour
 
         yield return new WaitForSeconds(0.35f);
 
+        //爆牌
         if(handcardCount == 10)//大於10張
         {
-            print("爆手牌");
+            card.GetChild(1).GetComponent<Image>().material = Instantiate(card.GetChild(1).GetComponent<Image>().material);
+            card.GetChild(0).GetChild(0).GetComponent<Image>().material = Instantiate(card.GetChild(0).GetChild(0).GetComponent<Image>().material);
+
+            Material m = card.GetChild(1).GetComponent<Image>().material;   //取得材質
+            Material m0 = card.GetChild(0).GetChild(0).GetComponent<Image>().material;   //取得材質
+
+            Text[] texts = GetComponentsInChildren<Text>();
+
+            for (int i = 0; i < texts.Length; i++) texts[i].enabled = false;
+          
+            m.SetFloat("Switch", 1);
+            m0.SetFloat("Switch", 1);
+            float a = 0;
+
+            while (m.GetFloat("AlphaClip") < 4)
+            {
+                a += 0.1f;
+                m.SetFloat("AlphaClip", a);
+                m0.SetFloat("AlphaClip", a);
+                yield return null;
+            }
+            Destroy(card.gameObject);
+            BattleDeck.RemoveAt(BattleDeck.Count - 1);
+            handGameObject.RemoveAt(handGameObject.Count - 1);
         }
 
         else

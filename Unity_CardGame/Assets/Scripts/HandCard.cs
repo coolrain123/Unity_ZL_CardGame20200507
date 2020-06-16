@@ -49,9 +49,9 @@ public class HandCard : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHa
         {
             inScene = true;
             transform.SetParent(scene);
-            BattleManager.instance.crystal -= crystalCost;
-            print(BattleManager.instance.crystal);
-            BattleManager.instance.UpdateCrystal();
+            BattleManager.instance.crystal -= crystalCost;  //扣水晶            
+            BattleManager.instance.UpdateCrystal();         //更新水晶    
+            BattleManager.instance.handcardCount--;         //手牌數量--
         }
         else
         {
