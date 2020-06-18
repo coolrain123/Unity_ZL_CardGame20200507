@@ -28,10 +28,10 @@ public class BattleManager : MonoBehaviour
 
 
 
-    private bool firstAtk;
+    public bool firstAtk;
 
     private bool myTurn;
-    private int crystalTotal;
+    protected int crystalTotal;
 
     /// <summary>
     /// 水晶數量
@@ -68,7 +68,7 @@ public class BattleManager : MonoBehaviour
         crystal = crystalTotal;
        
         Crystal();
-        StartCoroutine(GetCard(1));
+        StartCoroutine(GetCard(1,DeckManager.instance,-200,-275));
     }
 
     private void ThrowCoin()
@@ -76,6 +76,7 @@ public class BattleManager : MonoBehaviour
         coin.AddForce(0, Random.Range(300, 500), 0);
         coin.AddTorque(Random.Range(100, 200), 0, Random.Range(100, 200));
         Invoke("coinCheck", 3);
+        NPCBattleManager.instenceNPC.Invoke("coinCheck", 3.5f);
     }
 
     /// <summary>
@@ -83,7 +84,7 @@ public class BattleManager : MonoBehaviour
     /// rotation.x  為0  為正面
     /// rotation.x  為-1 為反面
     /// </summary>
-    private void coinCheck()
+    protected virtual void coinCheck()
     {
 
         print(coin.transform.GetChild(0).position.y);
@@ -102,14 +103,14 @@ public class BattleManager : MonoBehaviour
 
         Crystal();
 
-        StartCoroutine(GetCard(card));
+        StartCoroutine(GetCard(card, DeckManager.instance, -200, -275));
     }
 
 
     /// <summary>
     /// 處理水晶數量
     /// </summary>
-    private void Crystal()
+    protected virtual void Crystal()
     {
         // 顯示目前有幾顆水晶
         for (int i = 0; i < crystal; i++)
@@ -135,19 +136,25 @@ public class BattleManager : MonoBehaviour
         textCrystal.text = crystal + " / 10";
     }
 
-    private IEnumerator GetCard(int count)
+    /// <summary>
+    /// 抽牌
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="deck"></param>
+    /// <returns></returns>
+    protected virtual IEnumerator GetCard(int count , DeckManager deck ,int rightY,int handY)
     {
         for (int i = 0; i < count; i++)
         {
-            BattleDeck.Add(DeckManager.instance.deck[0]);
+            BattleDeck.Add(deck.deck[0]);
 
-            DeckManager.instance.deck.RemoveAt(0);
+            deck.deck.RemoveAt(0);
 
-            handGameObject.Add(DeckManager.instance.deckGameObject[0]);
+            handGameObject.Add(deck.deckGameObject[0]);
 
-            DeckManager.instance.deckGameObject.RemoveAt(0);
+            deck.deckGameObject.RemoveAt(0);
 
-            yield return StartCoroutine(MoveCard());
+            yield return StartCoroutine(MoveCard(rightY, handY));
         }           
         
     }
@@ -156,9 +163,8 @@ public class BattleManager : MonoBehaviour
     /// 抽出卡牌並移動到手牌區
     /// </summary>
     /// <returns></returns>
-
     public int handcardCount;
-    private IEnumerator MoveCard()
+    private IEnumerator MoveCard(int rightY, int handY)
     {
         RectTransform card = handGameObject[handGameObject.Count - 1].GetComponent<RectTransform>();
 
@@ -169,7 +175,7 @@ public class BattleManager : MonoBehaviour
 
         while (card.anchoredPosition.x > 501)
         {
-            card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(500, 0), 0.5f * Time.deltaTime * 50);
+            card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(500, rightY), 0.5f * Time.deltaTime * 50);
 
             yield return null;
         }
@@ -209,10 +215,13 @@ public class BattleManager : MonoBehaviour
         {
             //進入手牌
             card.localScale = Vector3.one * 0.5f;
+            bool con = true;
 
-            while (card.anchoredPosition.y > -274)
+            while (con)
             {
-                card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, -275), 0.5f * Time.deltaTime * 50);
+                if (handY < 0) con = card.anchoredPosition.y > handY + 1;
+                else con = card.anchoredPosition.y < handY - 1;
+                card.anchoredPosition = Vector2.Lerp(card.anchoredPosition, new Vector2(0, handY), 0.5f * Time.deltaTime * 50);
 
                 yield return null;
             }

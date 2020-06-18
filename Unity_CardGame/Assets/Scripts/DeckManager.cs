@@ -11,7 +11,7 @@ public class DeckManager : MonoBehaviour
     //牌組管理器實體物件
     public static DeckManager instance;
 
-    [Header("卡牌物件")]
+    [Header("套牌物件")]
     public GameObject DeckObject;
     [Header("牌組內容")]
     public Transform contentDeck;
@@ -32,7 +32,7 @@ public class DeckManager : MonoBehaviour
         BattleManager.instance.StartBattle();
        
     }
-    private void Awake()
+    protected virtual void Awake()
     {
         instance = this;
 
@@ -41,6 +41,30 @@ public class DeckManager : MonoBehaviour
         btnStart.onClick.AddListener(StartBattle);
     }
 
+    protected virtual void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            choose30Cards();
+        }
+    }
+
+    protected virtual void choose30Cards()
+    {
+        while (deck.Count < 30)
+        {
+            int r = Random.Range(1, GetCard.instance.cards.Length + 1);
+
+            CardData card = GetCard.instance.cards[r - 1];
+
+            List<CardData> sameCard = deck.FindAll(c => c.Equals(card));
+
+            if (sameCard.Count < 2)
+            {
+                AddCard(r);
+            }
+        }
+    }
     public void AddCard(int index)
     {
         if (deck.Count < 30)
@@ -114,24 +138,9 @@ public class DeckManager : MonoBehaviour
       
     }
 
-    private void Update()
-    {
-        if(Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            choose30Cards();
-        }
-    }
+  
 
-    private void choose30Cards()
-    {
-        for (int i = 0; i < 2; i++)
-        {
-            for (int j = 1; j <= 15; j++)
-            {
-                AddCard(j);
-            }
-        }
-    }
+    
     public void Shuffle()
     {
         for (int i = 0; i < deck.Count; i++)
