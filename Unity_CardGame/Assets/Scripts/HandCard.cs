@@ -6,18 +6,24 @@ public class HandCard : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHa
 {
     private Vector3 original;
     private RectTransform rect;
+
+    
     private Transform scene;
 
     private bool inScene;
     private int crystalCost;
+
+    public string sceneName;//場地名稱
+    public float pos;       //拖拉進場判定位置
 
     private void Start()
     {
         rect = GetComponent<RectTransform>();
         crystalCost = int.Parse(transform.Find("消耗").GetComponent<Text>().text);
         
-        scene = GameObject.Find("我方場地").transform;
+        scene = GameObject.Find(sceneName).transform;
     }
+
     public void OnBeginDrag(PointerEventData eventData)
     {
         original = transform.position; //紀錄原始座標
@@ -34,7 +40,11 @@ public class HandCard : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHa
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        if (rect.anchoredPosition.y > 60)
+        bool con;
+        if (sceneName.Contains("NPC")) con = rect.anchoredPosition.y <= pos;
+        else con = rect.anchoredPosition.y > 60;
+
+        if (con)
         {
             checkCrystal();
         }
@@ -43,15 +53,20 @@ public class HandCard : MonoBehaviour, IBeginDragHandler,IDragHandler,IEndDragHa
             transform.position = original;//歸位       
         }
     }
+
+    public BattleManager battle;
     private void checkCrystal()
     {
-        if (crystalCost <= BattleManager.instance.crystal)
+        if (crystalCost <= battle.crystal)
         {
             inScene = true;
             transform.SetParent(scene);
-            BattleManager.instance.crystal -= crystalCost;  //扣水晶            
-            BattleManager.instance.UpdateCrystal();         //更新水晶    
-            BattleManager.instance.handcardCount--;         //手牌數量--
+            battle.crystal -= crystalCost;  //扣水晶            
+            battle.UpdateCrystal();         //更新水晶    
+            battle.handcardCount--;         //手牌數量--
+
+            gameObject.AddComponent<AttackCard>();
+            if (sceneName.Contains("NPC")) transform.Find("卡背").gameObject.SetActive(false);
         }
         else
         {

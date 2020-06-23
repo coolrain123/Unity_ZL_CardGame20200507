@@ -24,14 +24,14 @@ public class BattleManager : MonoBehaviour
     [Header("水晶數量介面")]
     public Text textCrystal;
     [Header("擲金幣畫面")]
-    public GameObject coinView;
-
-
+    public GameObject coinView;    
 
     public bool firstAtk;
 
     private bool myTurn;
     protected int crystalTotal;
+    protected string sceneName;
+    protected float pos;
 
     /// <summary>
     /// 水晶數量
@@ -41,6 +41,8 @@ public class BattleManager : MonoBehaviour
     private void Start()
     {
         instance = this;
+        sceneName = "我方場地";
+        pos = 60;
     }
 
     public void StartBattle()
@@ -68,7 +70,10 @@ public class BattleManager : MonoBehaviour
         crystal = crystalTotal;
        
         Crystal();
-        StartCoroutine(GetCard(1,DeckManager.instance,-200,-275));
+        if(sceneName.Contains("NPC"))
+            StartCoroutine(GetCard(1,DeckManager.instance,200,275));
+        else
+            StartCoroutine(GetCard(1, DeckManager.instance, -200, -275));
     }
 
     private void ThrowCoin()
@@ -168,6 +173,7 @@ public class BattleManager : MonoBehaviour
     {
         RectTransform card = handGameObject[handGameObject.Count - 1].GetComponent<RectTransform>();
 
+        if (sceneName.Contains("NPC")) card.transform.Find("卡背").gameObject.SetActive(true);
         //進手牌前
         card.SetParent(canvas);
         card.anchorMin = Vector2.one * 0.5f;
@@ -186,10 +192,13 @@ public class BattleManager : MonoBehaviour
         if(handcardCount == 10)//大於10張
         {
             card.GetChild(1).GetComponent<Image>().material = Instantiate(card.GetChild(1).GetComponent<Image>().material);
+            card.GetChild(7).GetComponent<Image>().material = Instantiate(card.GetChild(7).GetComponent<Image>().material);
             card.GetChild(0).GetChild(0).GetComponent<Image>().material = Instantiate(card.GetChild(0).GetChild(0).GetComponent<Image>().material);
+           
 
             Material m = card.GetChild(1).GetComponent<Image>().material;   //取得材質
             Material m0 = card.GetChild(0).GetChild(0).GetComponent<Image>().material;   //取得材質
+            Material m1 = card.GetChild(7).GetComponent<Image>().material; //取得材質
 
             Text[] texts = GetComponentsInChildren<Text>();
 
@@ -197,6 +206,7 @@ public class BattleManager : MonoBehaviour
           
             m.SetFloat("Switch", 1);
             m0.SetFloat("Switch", 1);
+            m1.SetFloat("Switch", 1);
             float a = 0;
 
             while (m.GetFloat("AlphaClip") < 4)
@@ -204,6 +214,7 @@ public class BattleManager : MonoBehaviour
                 a += 0.1f;
                 m.SetFloat("AlphaClip", a);
                 m0.SetFloat("AlphaClip", a);
+                m1.SetFloat("AlphaClip", a);
                 yield return null;
             }
             Destroy(card.gameObject);
@@ -228,6 +239,14 @@ public class BattleManager : MonoBehaviour
 
             card.SetParent(handArea);
             card.gameObject.AddComponent<HandCard>();
+            card.gameObject.GetComponent<HandCard>().sceneName = sceneName;
+            card.gameObject.GetComponent<HandCard>().pos = pos;
+
+            if (sceneName.Contains("NPC"))
+                card.gameObject.GetComponent<HandCard>().battle = NPCBattleManager.instenceNPC;
+            else
+                card.gameObject.GetComponent<HandCard>().battle = BattleManager.instance;
+
             handcardCount++;
         }
        

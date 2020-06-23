@@ -8,6 +8,8 @@ public class NPCBattleManager : BattleManager
     private void Start()
     {
         instenceNPC = this;
+        sceneName = "NPC方場地";
+        pos = -180;
     }
 
     protected override void coinCheck()
